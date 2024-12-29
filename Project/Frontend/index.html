@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Expense Manager</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+
+        .navbar {
+            background-color: #343a40;
+        }
+
+        .navbar-brand {
+            color: #ffffff !important;
+            font-weight: bold;
+        }
+
+        .main-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .form-container {
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            max-width: 500px;
+            width: 100%;
+        }
+
+        .form-control {
+            margin-bottom: 15px;
+        }
+
+        .card {
+            margin-bottom: 20px;
+        }
+
+        .profile-img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark" id="navbar">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">BudgetBuddy</a>
+            <div class="d-flex align-items-center">
+                <span id="currentDateTime" class="text-light me-3"></span>
+                <img id="profilePic" class="profile-img me-2 d-none" src="#" alt="Profile Picture">
+                <span id="loggedInUser" class="text-light me-3">Welcome, User</span>
+                <button id="logoutBtn" class="btn btn-outline-light btn-sm">Logout</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="main-container">
+        <!-- Login/Signup Forms -->
+        <div id="authSection" class="form-container">
+            <h3 class="text-center">Login or Signup</h3>
+            <div class="d-flex justify-content-around mb-3">
+                <button id="showSignupBtn" class="btn btn-secondary">Signup</button>
+                <button id="showLoginBtn" class="btn btn-secondary">Login</button>
+            </div>
+            <form id="signupForm" class="d-none">
+                <input type="text" id="signupName" class="form-control" placeholder="Enter Your Name" required>
+                <input type="text" id="signupUsername" class="form-control" placeholder="Enter Username" required>
+                <input type="email" id="signupEmail" class="form-control" placeholder="Enter Email" required>
+                <input type="file" id="profilePicture" class="form-control" accept="image/*" required>
+                <button type="submit" class="btn btn-primary w-100">Signup</button>
+            </form>
+            <form id="loginForm" class="d-none">
+                <input type="text" id="loginUsername" class="form-control" placeholder="Enter Username" required>
+                <button type="submit" class="btn btn-primary w-100">Login</button>
+            </form>
+        </div>
+
+        <!-- Expense Manager Section -->
+        <div id="appSection" class="container d-none">
+            <div class="row">
+                <div class="col-md-6">
+                    <!-- Income Section -->
+                    <div class="card">
+                        <div class="card-header bg-success text-white">
+                            <h5>Income</h5>
+                        </div>
+                        <div class="card-body">
+                            <form id="incomeForm">
+                                <input type="text" id="incomeName" class="form-control" placeholder="Income Name" required>
+                                <input type="number" id="incomeAmount" class="form-control" placeholder="Income Amount" required>
+                                <button type="submit" class="btn btn-success w-100">Add Income</button>
+                            </form>
+                            <div class="mt-3" id="incomeList"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <!-- Expenses Section -->
+                    <div class="card">
+                        <div class="card-header bg-danger text-white">
+                            <h5>Expenses</h5>
+                        </div>
+                        <div class="card-body">
+                            <form id="expensesForm">
+                                <input type="text" id="expenseName" class="form-control" placeholder="Expense Name" required>
+                                <input type="number" id="expenseAmount" class="form-control" placeholder="Expense Amount" required>
+                                <button type="submit" class="btn btn-danger w-100">Add Expense</button>
+                            </form>
+                            <div class="mt-3" id="expenseList"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="mt-4 text-center">
+                <p>Total Income: <strong id="totalIncome">0</strong></p>
+                <p>Total Expenses: <strong id="totalExpenses">0</strong></p>
+                <p>Savings: <strong id="savings">0</strong></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Elements
+        const authSection = document.getElementById('authSection');
+        const appSection = document.getElementById('appSection');
+        const navbar = document.getElementById('navbar');
+        const showSignupBtn = document.getElementById('showSignupBtn');
+        const showLoginBtn = document.getElementById('showLoginBtn');
+        const signupForm = document.getElementById('signupForm');
+        const loginForm = document.getElementById('loginForm');
+        const profilePicture = document.getElementById('profilePicture');
+        const profilePic = document.getElementById('profilePic');
+        const currentDateTime = document.getElementById('currentDateTime');
+        const loggedInUser = document.getElementById('loggedInUser');
+        const logoutBtn = document.getElementById('logoutBtn');
+
+        // User Data Storage
+        let userData = JSON.parse(localStorage.getItem('userData')) || {};
+
+        // Display Date and Time
+        function updateDateTime() {
+            const now = new Date();
+            currentDateTime.textContent = now.toLocaleString();
+        }
+        setInterval(updateDateTime, 1000);
+
+        // Show Signup Form
+        showSignupBtn.addEventListener('click', () => {
+            signupForm.classList.remove('d-none');
+            loginForm.classList.add('d-none');
+        });
+
+        // Show Login Form
+        showLoginBtn.addEventListener('click', () => {
+            signupForm.classList.add('d-none');
+            loginForm.classList.remove('d-none');
+        });
+
+        // Signup Form Submit
+        signupForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const reader = new FileReader();
+            const file = profilePicture.files[0];
+
+            reader.onload = async () => {
+                const newUser = {
+                    name: document.getElementById('signupName').value,
+                    username: document.getElementById('signupUsername').value,
+                    email: document.getElementById('signupEmail').value,
+                    profilePic: reader.result
+                };
+
+                try {
+                    // Save user to the backend (MySQL)
+                    const response = await fetch('your-backend-api/signup', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(newUser)
+                    });
+
+                    const result = await response.json();
+                    if (result.success) {
+                        userData = newUser;
+                        localStorage.setItem('userData', JSON.stringify(userData));
+                        showAppSection();
+                    } else {
+                        alert(result.message);
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                }
+            };
+
+            if (file) reader.readAsDataURL(file);
+        });
+
+        // Login Form Submit
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const username = document.getElementById('loginUsername').value;
+
+            try {
+                // Check if user exists in the backend (MySQL)
+                const response = await fetch(`your-backend-api/login?username=${username}`);
+                const result = await response.json();
+
+                if (result.success) {
+                    userData = result.user;
+                    localStorage.setItem('userData', JSON.stringify(userData));
+                    showAppSection();
+                } else {
+                    alert('User not found. Please sign up first.');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        });
+
+        // Show App Section
+        function showAppSection() {
+            navbar.classList.remove('d-none');
+            authSection.classList.add('d-none');
+            appSection.classList.remove('d-none');
+            loggedInUser.textContent = `Welcome, ${userData.name}`;
+            profilePic.src = userData.profilePic;
+            profilePic.classList.remove('d-none');
+        }
+
+        // Logout
+        logoutBtn.addEventListener('click', () => {
+            localStorage.removeItem('userData');
+            userData = {};
+            navbar.classList.add('d-none');
+            authSection.classList.remove('d-none');
+            appSection.classList.add('d-none');
+        });
+
+        // Initialize App
+        if (userData.username) {
+            showAppSection();
+        }
+
+        const checkUsernameAvailability = (username) => {
+    fetch('/check-username', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ username })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.available) {
+            // Username is available
+        } else {
+            alert('Username is already taken');
+        }
+    });
+};
+const login = (username) => {
+    fetch('/login', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ username })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Display user data
+            console.log(data.user);
+            console.log(data.incomes);
+            console.log(data.expenses);
+            // Update the UI with the user's data
+        } else {
+            alert(data.message); // "User not found"
+        }
+    });
+};
+
+
+    </script>
+</body>const updateIncome = (userId, name, amount) => {
+    fetch('/update-income', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ userId, name, amount })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('Income updated');
+        }
+    });
+};
+
+const updateExpense = (userId, name, amount) => {
+    fetch('/update-expense', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ userId, name, amount })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('Expense updated');
+        }
+    });
+};
+
+
+</html>
