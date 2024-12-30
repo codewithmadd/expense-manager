@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Budget Manager</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="styles.css">
+    <script defer src="script.js"></script>
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container">
+            <a class="navbar-brand" href="#">Budget Buddy</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <button  id="logout-link" class="nav-link d-none btn btn-link" href="#">Logout</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container mt-5">
+        <div id="auth-section">
+            <div id="signup-form" class="d-none">
+                <form>
+                    <h2>Signup</h2>
+                    <div class="mb-3">
+                        <label for="signup-name" class="form-label">Name</label>
+                        <input type="text" class="form-control" id="signup-name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="signup-username" class="form-label">Username</label>
+                        <input type="text" class="form-control" id="signup-username" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="signup-password" class="form-label">Password</label>
+                        <input type="password" class="form-control" id="signup-password" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Sign Up</button>
+                    <button type="button" class="btn btn-link" id="show-login">Already have an account? Log in</button>
+                </form>
+            </div>
+
+            <div id="login-form">
+                <form>
+                    <h2>Login</h2>
+                    <div class="mb-3">
+                        <label for="login-username" class="form-label">Username</label>
+                        <input type="text" class="form-control" id="login-username" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="login-password" class="form-label">Password</label>
+                        <input type="password" class="form-control" id="login-password" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Login</button>
+                    <button type="button" class="btn btn-link" id="show-signup">Don't have an account? Sign up</button>
+                </form>
+            </div>
+        </div>
+
+        <div id="dashboard-section" class="d-none">
+            <h1 class="text-center">Welcome, <span id="user-name"></span>!</h1>
+
+            <div class="row mt-4">
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-body text-center">
+                            <h5 class="card-title">Total Income</h5>
+                            <p id="total-income" class="card-text">AED 0.00</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-body text-center">
+                            <h5 class="card-title">Total Expenses</h5>
+                            <p id="total-expenses" class="card-text">AED 0.00</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-body text-center">
+                            <h5 class="card-title">Total Savings</h5>
+                            <p id="total-savings" class="card-text">AED 0.00</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mt-4">
+                <div class="col-md-6">
+                    <h3>Add Income</h3>
+                    <form id="income-form">
+                        <div class="mb-3">
+                            <label for="income-source" class="form-label">Source</label>
+                            <input type="text" class="form-control" id="income-source" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="income-amount" class="form-label">Amount</label>
+                            <input type="number" class="form-control" id="income-amount" required>
+                        </div>
+                        <button type="submit" class="btn btn-success">Add Income</button>
+                    </form>
+
+                    <h3 class="mt-4">Income Records</h3>
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Source</th>
+                                <th>Amount</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="income-table">
+                            <tr>
+                                <td colspan="3" class="text-center">No records found.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="col-md-6">
+                    <h3>Add Expense</h3>
+                    <form id="expense-form">
+                        <div class="mb-3">
+                            <label for="expense-source" class="form-label">Source</label>
+                            <input type="text" class="form-control" id="expense-source" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="expense-amount" class="form-label">Amount</label>
+                            <input type="number" class="form-control" id="expense-amount" required>
+                        </div>
+                        <button type="submit" class="btn btn-danger">Add Expense</button>
+                    </form>
+
+                    <h3 class="mt-4">Expense Records</h3>
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Source</th>
+                                <th>Amount</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="expense-table">
+                            <tr>
+                                <td colspan="3" class="text-center">No records found.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>
